@@ -1,0 +1,3 @@
+- memcached forwarded msg
+- wrap as an executable file
+- async to Promise: throw error instead of return null
