@@ -4,9 +4,7 @@ const express = require("express");
 const http = require("node:http");
 const ws = require("ws");
 
-exports.createServer = () => {
-    const config = require("./config").config.web
-
+exports.createServer = (bind_addr='127.0.0.1', port=8888) => {
     const express_server = express()
     express_server.use(express.json())
     const httpserver = http.createServer(express_server)
@@ -18,8 +16,8 @@ exports.createServer = () => {
         })
     })
     // start listening
-    httpserver.listen(config.port, config.bind_addr, () => {
-        console.log(`HTTP/WebSocket API Server listening at http://${config.bind_addr}:${config.port}`)
+    httpserver.listen(port, bind_addr, () => {
+        console.log(`HTTP/WebSocket API Server listening at http://${bind_addr}:${port}`)
     })
 
     return {

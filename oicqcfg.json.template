@@ -1,0 +1,7 @@
+{
+    "data_dir": ".oicq_data",
+    "qq": 10000,
+    "password": "xxx",
+    "bindaddr": "127.0.0.1",
+    "port": 8888
+}
