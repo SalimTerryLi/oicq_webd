@@ -2,6 +2,7 @@
 
 const {convert_oicq_message_to_msgContent} = require("./utils");
 const {parseString: parseXML} = require("xml2js");
+const {Sendable} = require("oicq/lib/message/elements");
 const listener = require("../middleware").webListener
 const bot = require("../middleware").botClient
 
@@ -38,15 +39,28 @@ exports.deliver_event = (packed_msg) => {
 const build_http_response = require("./utils").build_http_response
 const convert_msgContent_to_oicq = require("./utils").convert_msgContent_to_oicq
 
+const msgid_utils = require('./utils').msgid_utils
+
 listener.http_listener.get('/', (req, res) => {
     res.json(build_http_response(-1))
 })
 
 listener.http_listener.post('/sendMsg/private', (req, res) => {
     convert_msgContent_to_oicq(req.body.msgContent).then(r => {
-        bot.pickUser(req.body.dest).sendMsg(r).then(r => {
+        let reply_info
+        if ("reply" in req.body && req.body.reply !== null){
+            const msgid = msgid_utils.convert_msgid_to_seq(req.body.reply.id)
+            reply_info = {
+                user_id: req.body.reply.to,
+                time: "time" in req.body.reply? req.body.reply.time: msgid.time,
+                seq: msgid.seq,
+                rand: msgid.rand,
+                message: req.body.reply.text
+            }
+        }
+        bot.pickUser(req.body.dest).sendMsg(r, reply_info).then(r => {
             res.json(build_http_response(0, {
-                msgID: r.message_id
+                msgID: msgid_utils.convert_seq_to_msgid(r.seq, r.rand, r.time)
             }))
         }).catch(r => {
             res.json(build_http_response(-2))
@@ -59,9 +73,20 @@ listener.http_listener.post('/sendMsg/private', (req, res) => {
 
 listener.http_listener.post('/sendMsg/group', (req, res) => {
     convert_msgContent_to_oicq(req.body.msgContent).then(r => {
-        bot.pickGroup(req.body.dest).sendMsg(r).then(r => {
+        let reply_info
+        if ("reply" in req.body && req.body.reply !== null){
+            const msgid = msgid_utils.convert_msgid_to_seq(req.body.reply.id)
+            reply_info = {
+                user_id: req.body.reply.to,
+                time: "time" in req.body.reply? req.body.reply.time: msgid.time,
+                seq: msgid.seq,
+                rand: msgid.rand,
+                message: req.body.reply.text
+            }
+        }
+        bot.pickGroup(req.body.dest).sendMsg(r, reply_info).then(r => {
             res.json(build_http_response(0, {
-                msgID: r.message_id
+                msgID: msgid_utils.convert_seq_to_msgid(r.seq, r.rand, r.time)
             }))
         }).catch(r => {
             res.json(build_http_response(-2))
@@ -73,7 +98,8 @@ listener.http_listener.post('/sendMsg/group', (req, res) => {
 })
 
 listener.http_listener.post('/revoke/private', (req, res) => {
-    bot.pickUser(req.body.channel).recallMsg(req.body.msgID).then(r => {
+    const msgID = msgid_utils.convert_msgid_to_seq(req.body.msgID)
+    bot.pickUser(req.body.channel).recallMsg(msgID.seq, msgID.rand, msgID.time).then(r => {
         if (r) {
             res.json(build_http_response(0))
         } else {
@@ -85,8 +111,10 @@ listener.http_listener.post('/revoke/private', (req, res) => {
     })
 })
 
+// TODO: check pktnum
 listener.http_listener.post('/revoke/group', (req, res) => {
-    bot.pickGroup(req.body.channel).recallMsg(req.body.msgID).then(r => {
+    const msgID = msgid_utils.convert_msgid_to_seq(req.body.msgID)
+    bot.pickGroup(req.body.channel).recallMsg(msgID.seq, msgID.rand).then(r => {
         if (r) {
             res.json(build_http_response(0))
         } else {

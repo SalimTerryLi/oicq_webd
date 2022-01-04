@@ -168,3 +168,34 @@ exports.bot_storage = {
     group_invites: {},
     group_join_reqs: {}
 }
+
+/*
+ * convert seq + rand + timestamp to a string id
+ * based on: 32 bits timestamp + 32 bits seq + 32 bits rand, all LE
+ * [ tsL ... tsH seqL ... seqH raL ... raH ]
+ * buf[0]                             buf[11]
+ * total 12 byte (96 bits), then convert to base64
+ * finally got 128 bits
+ */
+
+exports.msgid_utils = {
+    convert_msgid_to_seq: (msgid) => {
+        let buffer = Buffer.from(msgid, 'base64')
+        if (buffer.length !== 12) {
+            return null
+        }
+        return {
+            seq: buffer.readUInt32LE(4),
+            rand: buffer.readUInt32LE(8),
+            time: buffer.readUInt32LE(0)
+        }
+    },
+
+    convert_seq_to_msgid: (seq, rand, time) => {
+        let buffer = Buffer.alloc(12)
+        buffer.writeUInt32LE(time, 0)
+        buffer.writeUInt32LE(seq, 4)
+        buffer.writeUInt32LE(rand, 8)
+        return buffer.toString('base64')
+    }
+}

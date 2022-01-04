@@ -5,6 +5,8 @@ const bot = require("../middleware").botClient
 const convert_oicq_message_to_msgContent = require("./utils").convert_oicq_message_to_msgContent
 const deliver_event = require("./webapi").deliver_event
 
+const msgid_utils = require('./utils').msgid_utils
+
 const bot_storage = require("./utils").bot_storage
 
 // 私聊消息
@@ -17,8 +19,14 @@ bot.on("message.private", e => {
             "known": e.subtype === "friend",
             "channel": e.subtype === "group" ? e.sender.group_id : 0,
             "sender": e.from_id,
-            "msgID": e.message_id,
-            "msgContent": convert_oicq_message_to_msgContent(e.message)
+            "msgID": msgid_utils.convert_seq_to_msgid(e.seq, e.rand, e.time),
+            "msgContent": convert_oicq_message_to_msgContent(e.message),
+            "reply": "source" in e? {
+                "to": e.source.user_id,
+                "time": e.source.time,
+                "text": e.source.message,
+                "id": msgid_utils.convert_seq_to_msgid(e.source.seq, e.source.rand, e.source.time),
+            }: undefined
         }
     })
 })
@@ -33,8 +41,14 @@ bot.on("message.group", e => {
             "known": e.anonymous === null,
             "channel": e.group_id,
             "sender": e.anonymous === null ? e.user_id : e.anonymous.id,
-            "msgID": e.message_id,
-            "msgContent": convert_oicq_message_to_msgContent(e.message)
+            "msgID": msgid_utils.convert_seq_to_msgid(e.seq, e.rand, e.time),
+            "msgContent": convert_oicq_message_to_msgContent(e.message),
+            "reply": "source" in e? {
+                "to": e.source.user_id,
+                "time": e.source.time,
+                "text": e.source.message,
+                "id": msgid_utils.convert_seq_to_msgid(e.source.seq, e.source.rand, e.source.time),
+            }: undefined
         }
     })
 })
@@ -48,7 +62,7 @@ bot.on("notice.friend.recall", e => {
             "channel": e.user_id,
             "revoker": e.operator_id,
             "revokee": e.user_id,
-            "msgID": e.message_id
+            "msgID": msgid_utils.convert_seq_to_msgid(e.seq, e.rand, e.time)
         }
     })
 })
@@ -62,7 +76,7 @@ bot.on("notice.group.recall", e => {
             "channel": e.group_id,
             "revoker": e.operator_id,
             "revokee": e.user_id,
-            "msgID": e.msgID
+            "msgID": msgid_utils.convert_seq_to_msgid(e.seq, e.rand, e.time)
         }
     })
 })

@@ -35,9 +35,27 @@
 ```json
 {
     "dest": 0,
-    "msgContent": []
+    "msgContent": [],
+    "reply": {
+        "to": 0,
+        "time": 0,
+        "id": "",
+        "text": ""
+    }
 }
 ```
+
+###### reply
+
+可选，是否为回复引用消息
+
+`time`可选，自定义时间
+
+`to`必选，自定义回复对象
+
+`text`必选，自定义内容
+
+填入非真实`to`信息会导致回复消息无法定位
 
 ##### 响应参数
 
@@ -59,9 +77,19 @@
 ```json
 {
     "dest": 0,
-    "msgContent": []
+    "msgContent": [],
+    "reply": {
+        "to": 0,
+        "time": 0,
+        "id": "",
+        "text": ""
+    }
 }
 ```
+
+###### reply
+
+同上
 
 ##### 响应参数
 

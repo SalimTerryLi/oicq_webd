@@ -35,7 +35,13 @@ S => C 事件推送
         "channel": 0,
         "sender": 0,
         "msgID": 0,
-        "msgContent": []
+        "msgContent": [],
+        "reply": {
+            "to": 0,
+            "time": 0,
+            "text": "",
+            "id": ""
+        }
     }
 }
 ```
@@ -63,6 +69,16 @@ S => C 事件推送
 ###### msgContent
 
 通用消息体结构
+
+###### reply
+
+存在时该消息为回复消息
+
+`to`回复给
+
+`text`显示的引用文本
+
+`id`消息id
 
 ## 撤回消息包结构
 
