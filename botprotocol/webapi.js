@@ -41,10 +41,6 @@ const convert_msgContent_to_oicq = require("./utils").convert_msgContent_to_oicq
 
 const msgid_utils = require('./utils').msgid_utils
 
-listener.http_listener.get('/', (req, res) => {
-    res.json(build_http_response(-1))
-})
-
 listener.http_listener.post('/sendMsg/private', (req, res) => {
     convert_msgContent_to_oicq(req.body.msgContent).then(r => {
         let reply_info
