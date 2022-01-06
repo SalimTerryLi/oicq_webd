@@ -16,8 +16,8 @@ bot.on("message.private", e => {
         data: {
             "type": "private",
             "time": e.time,
-            "known": e.subtype === "friend",
-            "channel": e.subtype === "group" ? e.sender.group_id : 0,
+            "known": e.sub_type === "friend",
+            "channel": e.sub_type === "group" ? e.sender.group_id : 0,
             "sender": e.from_id,
             "msgID": msgid_utils.convert_seq_to_msgid(e.seq, e.rand, e.time),
             "msgContent": convert_oicq_message_to_msgContent(e.message),
