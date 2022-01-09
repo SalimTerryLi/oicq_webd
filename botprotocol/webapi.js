@@ -54,7 +54,13 @@ listener.http_listener.post('/sendMsg/private', (req, res) => {
                 message: req.body.reply.text
             }
         }
-        bot.pickUser(req.body.dest).sendMsg(r, reply_info).then(r => {
+        let dest
+        if ("from" in req.body) {
+            dest = bot.pickGroup(req.body.from).pickMember(req.body.dest)
+        } else {
+            dest = bot.pickUser(req.body.dest)
+        }
+        dest.sendMsg(r, reply_info).then(r => {
             res.json(build_http_response(0, {
                 msgID: msgid_utils.convert_seq_to_msgid(r.seq, r.rand, r.time)
             }))
