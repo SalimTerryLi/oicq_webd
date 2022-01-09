@@ -24,7 +24,7 @@ bot.on("message.private", e => {
             "reply": "source" in e? {
                 "to": e.source.user_id,
                 "time": e.source.time,
-                "text": e.source.message,
+                "summary": e.source.message,
                 "id": msgid_utils.convert_seq_to_msgid(e.source.seq, e.source.rand, e.source.time),
             }: undefined
         }
@@ -46,7 +46,7 @@ bot.on("message.group", e => {
             "reply": "source" in e? {
                 "to": e.source.user_id,
                 "time": e.source.time,
-                "text": e.source.message,
+                "summary": e.source.message,
                 "id": msgid_utils.convert_seq_to_msgid(e.source.seq, e.source.rand, e.source.time),
             }: undefined
         }

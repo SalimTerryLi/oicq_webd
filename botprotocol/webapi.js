@@ -51,7 +51,7 @@ listener.http_listener.post('/sendMsg/private', (req, res) => {
                 time: "time" in req.body.reply? req.body.reply.time: msgid.time,
                 seq: msgid.seq,
                 rand: msgid.rand,
-                message: req.body.reply.text
+                message: req.body.reply.summary
             }
         }
         let dest
@@ -83,7 +83,7 @@ listener.http_listener.post('/sendMsg/group', (req, res) => {
                 time: "time" in req.body.reply? req.body.reply.time: msgid.time,
                 seq: msgid.seq,
                 rand: msgid.rand,
-                message: req.body.reply.text
+                message: req.body.reply.summary
             }
         }
         bot.pickGroup(req.body.dest).sendMsg(r, reply_info).then(r => {
