@@ -83,6 +83,7 @@ process.on("unhandledRejection", (reason, promise) => {
 const { createClient } = require("oicq")
 const bot_client = createClient(config.qq, {
     data_dir: config.data_dir,
+    ignore_self: false,
 })
 if ('qrcode' in argv) {
     // do qrcode login
