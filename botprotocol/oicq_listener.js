@@ -9,9 +9,11 @@ const msgid_utils = require('./utils').msgid_utils
 
 const bot_storage = require("./utils").bot_storage
 
+const msg_storage = require('./storage')
+
 // 私聊消息
 bot.on("message.private", e => {
-    deliver_event({
+    const event_pack = {
         type: "msg",
         data: {
             "type": "private",
@@ -28,12 +30,14 @@ bot.on("message.private", e => {
                 "id": msgid_utils.convert_seq_to_msgid(e.source.seq, e.source.rand, e.source.time),
             }: undefined
         }
-    })
+    }
+    msg_storage.save_msg_history(event_pack.data)
+    deliver_event(event_pack)
 })
 
 // 群聊消息
 bot.on("message.group", e => {
-    deliver_event({
+    const event_pack = {
         type: "msg",
         data: {
             "type": "group",
@@ -50,7 +54,9 @@ bot.on("message.group", e => {
                 "id": msgid_utils.convert_seq_to_msgid(e.source.seq, e.source.rand, e.source.time),
             }: undefined
         }
-    })
+    }
+    msg_storage.save_msg_history(event_pack.data)
+    deliver_event(event_pack)
 })
 
 // 私聊撤回

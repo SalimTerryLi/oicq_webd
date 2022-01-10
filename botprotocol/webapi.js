@@ -324,9 +324,9 @@ listener.http_listener.get('/user/getMemberDetail', (req, res) => {
     })
 })
 
-/** misc API **/
+/** mesg API **/
 
-listener.http_listener.get('/misc/parseForwardedMsg', (req, res) => {
+listener.http_listener.get('/mesg/parseForwardedMsg', (req, res) => {
     bot.pickUser(bot.uin).getForwardMsg(req.query["id"]).then(r => {
         let parsedMsgs = []
         for (const msg of r) {
@@ -346,7 +346,7 @@ listener.http_listener.get('/misc/parseForwardedMsg', (req, res) => {
 
 const convert_forward_msgs_to_oicq = require("./utils").convert_forward_msgs_to_oicq
 
-listener.http_listener.post('/misc/genForwardedMsg', (req, res) => {
+listener.http_listener.post('/mesg/genForwardedMsg', (req, res) => {
     convert_forward_msgs_to_oicq(req.body.msgs).then(r => {
         bot.pickUser(bot.uin).makeForwardMsg(r).then(r => {
             let parsedObj = null
@@ -372,4 +372,14 @@ listener.http_listener.post('/misc/genForwardedMsg', (req, res) => {
         console.error(e)
         res.json(build_http_response(-1))
     })
+})
+
+const msg_storage = require('./storage')
+listener.http_listener.get('/mesg/queryMsg', (req, res) => {
+    const result = msg_storage.query_msg_history(req.query["type"], req.query["channel"], req.query["id"])
+    if (result !== null) {
+        res.json(build_http_response(0, {"data": result}))
+    } else {
+        res.json(build_http_response(-1))
+    }
 })

@@ -360,11 +360,11 @@
 }
 ```
 
-### 杂项
+### 消息后处理
 
 #### 解析转发消息
 
-**URL**: `misc/parseForwardedMsg?id="xxx"`
+**URL**: `mesg/parseForwardedMsg?id="xxx"`
 
 **METHOD**: `GET`
 
@@ -394,7 +394,7 @@
 
 #### 制作转发消息
 
-**URL**: `misc/genForwardedMsg`
+**URL**: `mesg/genForwardedMsg`
 
 **METHOD**: `POST`
 
@@ -435,3 +435,51 @@
 ###### id
 
 生成的转发消息ID
+
+#### 查询原始消息
+
+**URL**: `mesg/queryMsg`
+
+**METHOD**: `GET`
+
+##### 请求参数
+
+###### type
+
+`private`或`group`
+
+###### id
+
+消息ID（msgID）
+
+###### channel
+
+QQ号或群号
+
+##### 响应参数
+
+同消息包结构：
+
+```json
+{
+    "status": {
+        "code": 0
+    },
+    "data": {
+        "type": "private|group",
+        "known": false,
+        "channel": 0,
+        "sender": 0,
+        "msgID": 0,
+        "msgContent": [],
+        "reply": {
+            "to": 0,
+            "time": 0,
+            "summary": "",
+            "id": ""
+        }
+	}
+}
+```
+
+未查询到则状态码为`-1`且无`data`字段

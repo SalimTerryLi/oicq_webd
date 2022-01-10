@@ -101,4 +101,4 @@ if ('qrcode' in argv) {
 const web_listener = require("./apiServer").createServer(config.bindaddr, config.port)
 
 // setup protocol middleware
-require("./middleware").createMiddleware(bot_client, web_listener)
+require("./middleware").createMiddleware(bot_client, web_listener, config)

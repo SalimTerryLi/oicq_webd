@@ -9,6 +9,7 @@
   "author": "SalimTerryLi",
   "license": "MIT",
   "dependencies": {
+    "better-sqlite3": "^7.4.6",
     "express": "^4.17.2",
     "oicq": "^2.1.4",
     "ws": "^8.3.0",
