@@ -173,7 +173,6 @@ bot.on("request.group.invite", e => {
 // TODO: TEST
 // 群增加、群员增加
 bot.on("notice.group.increase", e => {
-    console.log(e)
     if (e.user_id === bot.uin) {
         // Treat as user event: bot joined into a group
         deliver_event({
@@ -199,7 +198,6 @@ bot.on("notice.group.increase", e => {
 // TODO: TEST
 // 群减少、群员减少
 bot.on("notice.group.decrease", e => {
-    console.log(e)
     if (e.user_id === bot.uin) {
         // Treat as user event: bot left a group
         deliver_event({
