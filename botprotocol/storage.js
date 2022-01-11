@@ -12,6 +12,46 @@ let opened_conns = {
     group: {}
 }
 
+function schd_close_dbs() {
+    console.log('Scheduled closing old db connections...')
+    const curr = new Date()
+    let delta_period = new Date(0)
+    delta_period.setDate(2)
+    delta_period = delta_period.getTime()
+
+    function calc_date_from_str(str) {
+        let date = new Date(0)
+        date.setDate(str.substr(6,2))
+        date.setMonth(str.substr(4,2) - 1)
+        date.setFullYear(str.substr(0,4))
+        return date
+    }
+
+    let deleted_conns_count = 0
+    for (const conn_date in opened_conns.group) {
+        let time_delta = curr - calc_date_from_str(conn_date)
+        if (time_delta >= delta_period) {
+            for (const conn_name in opened_conns.group[conn_date]) {
+                opened_conns.group[conn_date][conn_name].close()
+                deleted_conns_count++
+            }
+            delete opened_conns.group[conn_date]
+        }
+    }
+    for (const conn_date in opened_conns.private) {
+        let time_delta = curr - calc_date_from_str(conn_date)
+        if (time_delta >= delta_period) {
+            for (const conn_name in opened_conns.private[conn_date]) {
+                opened_conns.private[conn_date][conn_name].close()
+                deleted_conns_count++
+            }
+            delete opened_conns.private[conn_date]
+        }
+    }
+    console.log('closed ' + deleted_conns_count + ' db connections')
+}
+setInterval(schd_close_dbs, 1000 * 60 * 60 * 3)
+
 function convert_timestamp_to_date(ts) {
     const date = new Date(ts)
     return date.getFullYear().toString().padStart(4, '0') +
