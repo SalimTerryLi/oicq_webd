@@ -65,6 +65,7 @@ bot.on("notice.friend.recall", e => {
         type: "revoke",
         data: {
             "type": "private",
+            "time": e.time,
             "channel": e.user_id,
             "revoker": e.operator_id,
             "revokee": e.user_id,
@@ -79,6 +80,7 @@ bot.on("notice.group.recall", e => {
         type: "revoke",
         data: {
             "type": "group",
+            "time": e.time,
             "channel": e.group_id,
             "revoker": e.operator_id,
             "revokee": e.user_id,

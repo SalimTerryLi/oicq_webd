@@ -11,7 +11,6 @@ S => C 事件推送
 ```json
 {
     "type": "msg|revoke|user|group",
-    "time": 0,
     "data": {}
 }
 ```
@@ -31,6 +30,7 @@ S => C 事件推送
     "type": "msg",
     "data": {
         "type": "private|group",
+    	"time": 0,
         "known": false,
         "channel": 0,
         "sender": 0,
@@ -87,6 +87,7 @@ S => C 事件推送
     "type": "revoke",
     "data": {
         "type": "private|group",
+    	"time": 0,
         "revoker": 0,
         "revokee": 0,
         "channel": 0,
