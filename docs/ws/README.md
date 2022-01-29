@@ -33,7 +33,9 @@ S => C 事件推送
     	"time": 0,
         "known": false,
         "channel": 0,
+        "channel_name": "",
         "sender": 0,
+        "sender_nick": "",
         "msgID": 0,
         "msgContent": [],
         "reply": {
@@ -58,9 +60,17 @@ S => C 事件推送
 
 私聊若为陌生人则是来源群，或0，群聊为收到消息的群
 
+###### channel_name
+
+群名，私聊时为对方的显示昵称
+
 ###### sender
 
 发送者
+
+###### sender_nick
+
+发送者的昵称
 
 ###### msgID
 

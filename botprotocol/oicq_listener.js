@@ -20,7 +20,9 @@ bot.on("message.private", e => {
             "time": e.time,
             "known": e.sub_type === "friend",
             "channel": e.sub_type === "group" ? e.sender.group_id : 0,
+            "channel_name": e.sender.nickname,  // TODO: read card if exists
             "sender": e.from_id,
+            "sender_name": e.sender.nickname,   // TODO: same as above
             "msgID": msgid_utils.convert_seq_to_msgid(e.seq, e.rand, e.time),
             "msgContent": convert_oicq_message_to_msgContent(e.message),
             "reply": "source" in e? {
@@ -44,7 +46,9 @@ bot.on("message.group", e => {
             "time": e.time,
             "known": e.anonymous === null,
             "channel": e.group_id,
+            "channel_name": e.group_name,
             "sender": e.anonymous === null ? e.user_id : e.anonymous.id,
+            "sender_name": e.sender.card === ''? e.sender.nickname: e.sender.card,
             "msgID": msgid_utils.convert_seq_to_msgid(e.seq, e.rand, e.time),
             "msgContent": convert_oicq_message_to_msgContent(e.message),
             "reply": "source" in e? {
