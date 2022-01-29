@@ -290,7 +290,7 @@ listener.http_listener.get('/user/getGroupList', (req, res) => {
     res.json(build_http_response(0, {"list": grouplist}))
 })
 
-listener.http_listener.get('/user/getMemberList', (req, res) => {
+listener.http_listener.get('/group/getMemberList', (req, res) => {
     bot.pickGroup(req.query["group"]).getMemberMap().then(r => {
         let memberlist = []
         for (const m of r.entries()) {
