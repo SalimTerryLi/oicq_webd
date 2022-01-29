@@ -48,7 +48,7 @@ bot.on("message.group", e => {
             "channel": e.group_id,
             "channel_name": e.group_name,
             "sender": e.anonymous === null ? e.user_id : e.anonymous.id,
-            "sender_name": e.sender.card === ''? e.sender.nickname: e.sender.card,
+            "sender_nick": e.sender.card === ''? e.sender.nickname: e.sender.card,
             "msgID": msgid_utils.convert_seq_to_msgid(e.seq, e.rand, e.time),
             "msgContent": convert_oicq_message_to_msgContent(e.message),
             "reply": "source" in e? {
