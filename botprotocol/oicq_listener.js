@@ -10,6 +10,7 @@ const msgid_utils = require('./utils').msgid_utils
 const bot_storage = require("./utils").bot_storage
 
 const msg_storage = require('./storage')
+const {segment} = require("oicq");
 
 // 私聊消息
 bot.on("message.private", e => {
@@ -70,16 +71,16 @@ bot.on("notice.friend.recall", e => {
         data: {
             "type": "private",
             "time": e.time,
-            "channel": e.user_id,
+            "channel": e.user_id,       // TODO: implement
             "revoker": e.operator_id,
-            "revokee": e.user_id,
+            "known": bot.fl.has(e.user_id),
             "msgID": msgid_utils.convert_seq_to_msgid(e.seq, e.rand, e.time)
         }
     })
 })
 
 // 群聊撤回
-bot.on("notice.group.recall", e => {
+bot.on("notice.group.recall", async function(e) {
     deliver_event({
         type: "revoke",
         data: {
@@ -87,7 +88,7 @@ bot.on("notice.group.recall", e => {
             "time": e.time,
             "channel": e.group_id,
             "revoker": e.operator_id,
-            "revokee": e.user_id,
+            "known": (await e.group.getMemberMap()).has(e.operator_id),
             "msgID": msgid_utils.convert_seq_to_msgid(e.seq, e.rand, e.time)
         }
     })
