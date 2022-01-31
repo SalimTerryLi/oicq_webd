@@ -22,7 +22,7 @@ bot.on("message.private", e => {
             "channel": e.sub_type === "group" ? e.sender.group_id : 0,
             "channel_name": e.sender.nickname,  // TODO: read card if exists
             "sender": e.from_id,
-            "sender_name": e.sender.nickname,   // TODO: same as above
+            "sender_nick": e.sender.nickname,   // TODO: same as above
             "msgID": msgid_utils.convert_seq_to_msgid(e.seq, e.rand, e.time),
             "msgContent": convert_oicq_message_to_msgContent(e.message),
             "reply": "source" in e? {
