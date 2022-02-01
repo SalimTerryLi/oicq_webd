@@ -56,6 +56,10 @@ async function async_convert_msgContent_to_oicq(msg) {
             } else {
                 retmsg.push(xmlmsg)
             }
+        } else if (p.type === "json") {
+            retmsg.push(segment.json(p.data))
+        } else if (p.type === "xml") {
+            retmsg.push(segment.xml(p.data))
         }
     }
     return retmsg
