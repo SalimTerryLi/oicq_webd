@@ -40,6 +40,8 @@ bot.on("message.private", e => {
 
 // 群聊消息
 bot.on("message.group", e => {
+    // do not proceed self sent message
+    if (e.user_id === bot.uin) {return}
     const event_pack = {
         type: "msg",
         data: {
