@@ -1,28 +1,39 @@
 "use strict"
 
-const argv = require('yargs/yargs')(process.argv.slice(2))
-    .usage('Usage: $0 [options]')
+const yargs = require('yargs/yargs')
+const {exit} = require("yargs");
+const argv = yargs(process.argv.slice(2))
+    .usage('Usage: $0 [option [value]] ...')
+    .usage('Cli parameters will override the corresponding ones from configuration file')
     .option('h', {
         alias: 'help',
         description: 'display help message'
     })
     .help('help')
-    .showHelpOnFail(false, 'whoops, something went wrong! run with --help')
+    .alias('v', 'version')
 
-    .option('c', {
-        description: 'config file path. default="oicqcfg.json". will be overridden by following opts',
-        alias: 'config',
-        type: 'string',
+    .config('config', (path) => {
+        try {
+            return require(path)
+        } catch {}
+        return {}
     })
+    .alias('c', 'config')
+    .default('c', 'oicqweb_cfg.json')
+
     .option('d', {
-        description: 'persist oicq data dir. default=".oicq_data"',
-        alias: 'data',
+        description: 'persist oicq data dir',
+        alias: 'datadir',
         type: 'string',
+        default: '.oicq_data'
     })
+
     .option('q', {
         description: 'qq number',
         alias: 'qq',
         type: 'number',
+    }).check((argv) => {
+        return 'qq' in argv
     })
     .option('P', {
         description: 'use password login',
@@ -33,73 +44,38 @@ const argv = require('yargs/yargs')(process.argv.slice(2))
         description: 'scan qrcode to login',
         alias: 'qrcode',
         type: 'boolean',
+        default: false
     })
-    .conflicts('s', 'P')
+    .check((argv) => {
+        return !(!('password' in argv) && !('qrcode' in argv));
+    })
+
     .option('p', {
-        description: 'WebAPI listen port. default=8888',
+        description: 'WebAPI listen port',
         alias: 'port',
         type: 'number',
+        default: 8888
     })
     .option('b', {
-        description: 'WebAPI bind address. default="127.0.0.1"',
-        alias: 'bindaddr',
+        description: 'WebAPI bind address',
+        alias: 'bind',
         type: 'string',
+        default: '127.0.0.1'
     })
+
+    .strict()
     .argv
 
-// fill default parameters
-let config = {
-    data_dir: '.oicq_data',
-    qq: 0,
-    password: '',
-    bindaddr: '127.0.0.1',
-    port: 8888
-}
-
-// try to load config file
-try {
-    const cfgFile = 'config' in argv? argv.config: 'oicqcfg.json'
-    const config_file = JSON.parse(require('fs').readFileSync(cfgFile))
-    console.error('loading cfg file: '+ cfgFile)
-    if ('data_dir' in config_file) config.data_dir = config_file.data_dir
-    if ('qq' in config_file) config.qq = config_file.qq
-    if ('password' in config_file) config.password = config_file.password
-    if ('bindaddr' in config_file) config.bindaddr = config_file.bindaddr
-    if ('port' in config_file) config.port = config_file.port
-} catch {}
-
-// apply options from cmdline
-if ('data' in argv) config.data_dir = argv.data
-if ('qq' in argv) config.qq = argv.qq
-if ('password' in argv) config.password = argv.password
-if ('bindaddr' in argv) config.bindaddr = argv.bindaddr
-if ('port' in argv) config.port = argv.port
+const daemon = new (require('./oicq_webd').OICQWebAPIDaemon)(argv)
+daemon.run().then(r => {})
 
 process.on("unhandledRejection", (reason, promise) => {
-    console.log('Unhandled Rejection at:', promise, 'reason:', reason)
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason)
 })
 
-// init oicq
-const { createClient } = require("oicq")
-const bot_client = createClient(config.qq, {
-    data_dir: config.data_dir,
-    ignore_self: false,
-})
-if ('qrcode' in argv) {
-    // do qrcode login
-    bot_client.on("system.login.qrcode", function (e) {
-        console.log("扫码后按Enter完成登录")
-        process.stdin.once("data", () => {
-            this.login()
-        })
-    }).login()
-} else {
-    // do password login
-    bot_client.login(config.password)
-}
-
-// load WebServer module
-const web_listener = require("./apiServer").createServer(config.bindaddr, config.port)
-
-// setup protocol middleware
-require("./middleware").createMiddleware(bot_client, web_listener, config)
+process.on('SIGINT', async function (){
+    console.log('SIGINT caught, requesting exiting...');
+    await daemon.request_stop()
+    // unfortunately oicq cannot do graceful shutdown.
+    process.exit(0)
+});

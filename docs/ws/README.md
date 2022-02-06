@@ -36,8 +36,11 @@ S => C 事件推送
         "channel_name": "",
         "sender": 0,
         "sender_nick": "",
+        "ref_channel": 0,
+        "ref_channel_name": "",
         "msgID": 0,
         "msgContent": [],
+        "msgString": "",
         "reply": {
             "to": 0,
             "time": 0,
@@ -58,11 +61,11 @@ S => C 事件推送
 
 ###### channel
 
-私聊若为陌生人则是来源群，或0，群聊为收到消息的群
+私聊为对方，群聊为群号
 
 ###### channel_name
 
-群名，私聊时为对方的显示昵称
+私聊为对方显示昵称，群聊为群名
 
 ###### sender
 
@@ -72,6 +75,14 @@ S => C 事件推送
 
 发送者的昵称
 
+###### ref_channel
+
+私聊若为陌生人则是来源群，或0，好友为0，群聊为0
+
+###### ref_channel_name
+
+私聊若为陌生人则是来源群名，或空串，好友为空串，群聊为空串
+
 ###### msgID
 
 消息序列ID
@@ -79,6 +90,10 @@ S => C 事件推送
 ###### msgContent
 
 通用消息体结构
+
+###### msgString
+
+蜜汁规则生成的文本消息，可用于回复引用
 
 ###### reply
 
@@ -112,7 +127,7 @@ S => C 事件推送
 
 ###### channel
 
-私聊好友为对方id，私聊陌生人为对方来源群号，群聊则为群号
+私聊好友为0，私聊陌生人为对方来源群号，群聊则为群号。若未查询到陌生人来源群聊则返回-1
 
 ###### known
 
@@ -153,7 +168,8 @@ S => C 事件推送
         "who": 0,
         "nick": "",
         "source": "",
-        "comment": "..."
+        "comment": "...",
+        "eventID": ""
     }
 }
 ```
@@ -170,6 +186,10 @@ S => C 事件推送
 
 备注信息
 
+###### eventID
+
+事件ID，需在事件响应请求中携带
+
 ### 入群邀请
 
 ```json
@@ -179,7 +199,8 @@ S => C 事件推送
         "type": "groupInvite",
         "group": 0,
         "groupName": "",
-        "inviter": 0
+        "inviter": 0,
+        "eventID": ""
     }
 }
 ```
@@ -259,7 +280,8 @@ S => C 事件推送
         "who": 0,
         "group": 0,
         "comment": "",
-        "inviter": 0
+        "inviter": 0,
+        "eventID", ""
     }
 }
 ```

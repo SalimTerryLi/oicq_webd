@@ -140,6 +140,7 @@
 ```json
 {
     "who": 0,
+    "eventID": "",
     "accept": true
 }
 ```
@@ -152,7 +153,8 @@
 
 ```json
 {
-    "group": 0,
+    "who": 0,
+    "eventID": "",
     "accept": true
 }
 ```
@@ -223,8 +225,8 @@
 
 ```json
 {
-    "requester": 0,
     "group": 0,
+    "eventID": "",
     "accept": true
 }
 ```
