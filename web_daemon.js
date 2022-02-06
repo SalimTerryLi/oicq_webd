@@ -37,7 +37,7 @@ const msgid_utils = require('./utils').msgid_utils
 const eventid_utils = require('./utils').eventid_utils
 const delay = require('./utils').delay
 
-exports.create_web_daemon = (httpserver, bot, msgdb, logger) => {
+exports.create_web_daemon = (httpserver, push_server, bot, msgdb, logger) => {
     // protocol fingerprint
     httpserver.get('/', async (req, res) => {
         res.json({
@@ -272,9 +272,26 @@ exports.create_web_daemon = (httpserver, bot, msgdb, logger) => {
             return
         }
 
-        bot.pickGroup(req.body.group).quit().then(r => {
+        let group
+        try {
+            group = bot.pickGroup(req.body.group, true)
+        } catch {
+            res.json(build_http_response(-2))
+            return
+        }
+
+        group.quit().then(r => {
             if (r) {
                 res.json(build_http_response(0))
+                push_server.deliver_data(JSON.stringify({
+                    "type": "user",
+                    "data": {
+                        "type": "groupLeft",
+                        "which": req.body.group,
+                        "name": group.name,
+                        "operator": bot.uin
+                    }
+                }))
             } else {
                 res.json(build_http_response(-2))
             }

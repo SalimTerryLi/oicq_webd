@@ -139,7 +139,8 @@ exports.create_bot_daemon = (push_server, bot, msgdb) => {
                 "type": "user",
                 "data": {
                     "type": "groupJoined",
-                    "which": e.group_id
+                    "which": e.group_id,
+                    "name": e.group.name,
                 }
             }))
         } else {
@@ -149,7 +150,8 @@ exports.create_bot_daemon = (push_server, bot, msgdb) => {
                 "data": {
                     "type": "memberJoined",
                     "who": e.user_id,
-                    "group": e.group_id
+                    "group": e.group_id,
+                    "group_name": e.group.name,
                 }
             }))
         }
@@ -164,6 +166,7 @@ exports.create_bot_daemon = (push_server, bot, msgdb) => {
                 "data": {
                     "type": "groupLeft",
                     "which": e.group_id,
+                    "name": e.group.name,
                     "operator": e.operator_id
                 }
             }))
@@ -175,6 +178,7 @@ exports.create_bot_daemon = (push_server, bot, msgdb) => {
                     "type": "memberLeft",
                     "who": e.user_id,
                     "group": e.group_id,
+                    "group_name": e.group.name,
                     "operator": e.operator_id
                 }
             }))

@@ -61,7 +61,7 @@ class OICQWebAPIDaemon{
             await this._bot.login(this._config.password)
         }
 
-        require('./web_daemon').create_web_daemon(this._http_server, this._bot, this._msgdb, this.logger)
+        require('./web_daemon').create_web_daemon(this._http_server, this._pushserv, this._bot, this._msgdb, this.logger)
         require('./bot_daemon').create_bot_daemon(this._pushserv, this._bot, this._msgdb)
     }
 

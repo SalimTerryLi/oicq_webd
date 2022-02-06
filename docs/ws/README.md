@@ -236,6 +236,7 @@ S => C 事件推送
     "type": "user",
     "data": {
         "type": "groupJoined",
+        "name": "",
         "which": 0
     }
 }
@@ -247,6 +248,7 @@ S => C 事件推送
     "data": {
         "type": "groupLeft",
         "which": 0,
+        "name": "",
         "operator": 0
     }
 }
@@ -335,7 +337,8 @@ S => C 事件推送
     "data": {
         "type": "memberJoined",
         "who": 0,
-        "group": 0
+        "group": 0,
+        "group_name": ""
     }
 }
 ```
@@ -347,6 +350,7 @@ S => C 事件推送
         "type": "memberLeft",
         "who": 0,
         "group": 0,
+        "group_name": "",
         "operator": 0
     }
 }
