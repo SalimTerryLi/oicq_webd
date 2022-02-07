@@ -337,6 +337,7 @@ S => C 事件推送
     "data": {
         "type": "memberJoined",
         "who": 0,
+        "nick": "",
         "group": 0,
         "group_name": ""
     }
@@ -349,6 +350,7 @@ S => C 事件推送
     "data": {
         "type": "memberLeft",
         "who": 0,
+        "nick": "",
         "group": 0,
         "group_name": "",
         "operator": 0
@@ -359,4 +361,8 @@ S => C 事件推送
 ###### operator
 
 执行操作的用户，群员自己或群管（自己退群or被T）
+
+###### nick
+
+群员减少时无该字段
 
