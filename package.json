@@ -1,10 +1,13 @@
 {
-  "name": "oicq-webapi",
-  "version": "0.1.0",
-  "description": "WebAPI for oicq",
+  "name": "oicq2-webapid",
+  "version": "0.1.2",
+  "description": "Yet another(?) WebAPI daemon for OICQ2",
   "main": "index.js",
   "scripts": {
     "dev": "node ./index.js"
+  },
+  "bin": {
+    "oicq2-webapid": "./index.js"
   },
   "author": "SalimTerryLi",
   "license": "MIT",
