@@ -49,12 +49,15 @@ exports.create_bot_daemon = (push_server, bot, msgdb) => {
     // 群聊撤回
     bot.on("notice.group.recall", async (e) => {
         push_server.deliver_data(JSON.stringify({
-            "type": "group",
-            "time": e.time,
-            "channel": e.group_id,
-            "revoker": e.operator_id,
-            "known": (await e.group.getMemberMap()).has(e.operator_id),
-            "msgID": msgid_utils.convert_seq_to_msgid(e.seq, e.rand, e.time)
+            type: "revoke",
+            data: {
+                "type": "group",
+                "time": e.time,
+                "channel": e.group_id,
+                "revoker": e.operator_id,
+                "known": (await e.group.getMemberMap()).has(e.operator_id),
+                "msgID": msgid_utils.convert_seq_to_msgid(e.seq, e.rand, e.time)
+            }
         }))
     })
 
@@ -145,11 +148,17 @@ exports.create_bot_daemon = (push_server, bot, msgdb) => {
             }))
         } else {
             // Treat as group event: new group member
+            let new_member = e.group.pickMember(e.user_id).info
+            if (new_member === undefined) {
+                await e.group.pickMember(e.user_id).renew()
+                new_member = e.group.pickMember(e.user_id).info
+            }
             push_server.deliver_data(JSON.stringify({
                 "type": "group",
                 "data": {
                     "type": "memberJoined",
                     "who": e.user_id,
+                    "nick": new_member.card === ''? new_member.nickname: new_member.card,
                     "group": e.group_id,
                     "group_name": e.group.name,
                 }
