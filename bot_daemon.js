@@ -176,7 +176,7 @@ exports.create_bot_daemon = (push_server, bot, msgdb) => {
                     "type": "groupLeft",
                     "which": e.group_id,
                     "name": e.group.name,
-                    "operator": e.operator_id
+                    "operator": e.operator_id === bot.uin? 0: e.operator_id
                 }
             }))
         } else {
@@ -188,7 +188,7 @@ exports.create_bot_daemon = (push_server, bot, msgdb) => {
                     "who": e.user_id,
                     "group": e.group_id,
                     "group_name": e.group.name,
-                    "operator": e.operator_id
+                    "operator": e.operator_id === e.user_id? 0: e.operator_id
                 }
             }))
         }
