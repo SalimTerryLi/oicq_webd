@@ -1,6 +1,6 @@
 {
   "name": "oicq2-webapid",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Yet another(?) WebAPI daemon for OICQ2",
   "main": "index.js",
   "scripts": {
