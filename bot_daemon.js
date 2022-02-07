@@ -83,13 +83,30 @@ exports.create_bot_daemon = (push_server, bot, msgdb) => {
 
     // 好友申请
     bot.on("request.friend", async (e) => {
+        let src = 0
+        if (e.source.indexOf('QQ群-') !== -1) {
+            const grp_name = e.source.substring(4)
+            for (const group of bot.gl.entries()){
+                if (group[1].group_name === grp_name) {
+                    if (src !== 0) {
+                        console.error('WARNING: Group Name collision, not able to detect new friend source')
+                        src = 0
+                        break
+                    }
+                    src = group[1].group_id
+                }
+            }
+        } else if(e.source.indexOf('QQ号查找') !== -1){
+        } else {
+            console.error('unhandled request.friend.source: ' + e.source)
+        }
         push_server.deliver_data(JSON.stringify({
             "type": "user",
             "data": {
                 "type": "newFriendRequest",
                 "who": e.user_id,
                 "nick": e.nickname,
-                "source": e.source,
+                "source": src,
                 "comment": e.comment,
                 "eventID": eventid_utils.gen_friend_req_id(e.seq, e.user_id)
             }

@@ -167,7 +167,7 @@ S => C 事件推送
         "type": "newFriendRequest",
         "who": 0,
         "nick": "",
-        "source": "",
+        "source": 0,
         "comment": "...",
         "eventID": ""
     }
@@ -180,7 +180,7 @@ S => C 事件推送
 
 ###### source
 
-来源信息
+来源信息，非0则为来源群号
 
 ###### comment
 
