@@ -21,13 +21,13 @@ exports.create_bot_daemon = (push_server, bot, msgdb) => {
 
     // 群聊消息
     bot.on("message.group", async (e) => {
-        if (e.user_id === bot.uin) {return}
         const event_pack = {
             type: "msg",
             data: await msg_utils.async_convert_group_message_event(e)
         }
-        push_server.deliver_data(JSON.stringify(event_pack))
         msgdb.save_msg_history(event_pack.data)
+        if (e.user_id === bot.uin) {return}
+        push_server.deliver_data(JSON.stringify(event_pack))
     })
 
     // 私聊撤回
