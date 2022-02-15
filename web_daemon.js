@@ -506,6 +506,14 @@ exports.create_web_daemon = (httpserver, push_server, bot, msgdb, logger) => {
         })
     })
 
+    httpserver.get('/user/basicInfo', async (req, res) => {
+        const info = await bot.pickUser(bot.uin).getSimpleInfo()
+        res.json(build_http_response(0, {"basic": {
+                'id': info.user_id,
+                'nickname': info.nickname,
+            }}))
+    })
+
     httpserver.get('/mesg/parseForwardedMsg', async (req, res) => {
         if (!('id' in req.query)) {
             res.sendStatus(400)

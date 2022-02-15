@@ -133,6 +133,28 @@
 
 ### 用户管理
 
+#### 获取 Bot 基本信息
+
+**URL**: `user/basicInfo`
+
+**METHOD**: `GET`
+
+无请求参数
+
+##### 返回值
+
+```json
+{
+    "status": {
+        "code": 0
+    },
+    "basic": {
+        "id": 0,
+        "nickname": ""
+    }
+}
+```
+
 #### 处理好友申请
 
 **URL**: `user/acceptFriend`
