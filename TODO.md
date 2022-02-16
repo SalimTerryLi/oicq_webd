@@ -1,4 +1,0 @@
-- memcached forwarded msg
-- wrap as an executable file
-- async to Promise: throw error instead of return null
-- memcached message history and implement msgID based content lookup
