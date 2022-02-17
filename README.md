@@ -11,7 +11,7 @@ Make sure nodejs and npm is properly installed and is on the latest LTS release 
 Then install the package globally:
 
 ```sh
-npm -i -g oicq2-webapid
+npm i -g oicq2-webapid
 ```
 
 Test installation:
