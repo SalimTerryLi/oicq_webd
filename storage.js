@@ -83,6 +83,9 @@ class MessageStorage{
     }
 
     save_msg_history(msgData) {
+        // parse back msg_id
+        const msg_ctx = utils.msgid_utils.convert_msgid_to_seq(msgData.msgID)
+
         // date part of msg db
         const dateStr = utils.convert_timestamp_to_date(msgData.time * 1000)
 
@@ -112,7 +115,7 @@ class MessageStorage{
             }
             // ensure db format
             const db = sqlite3(path.join(dirPath, chanStr + '.sqlite3'))
-            db.prepare('CREATE TABLE IF NOT EXISTS message_history (id TEXT, content TEXT, PRIMARY KEY (id))').run()
+            db.prepare('CREATE TABLE IF NOT EXISTS message_history (id_time INTEGER, id_seq INTEGER, id_rand INTEGER, content TEXT, PRIMARY KEY (id_time, id_seq, id_rand))').run()
             conn_date_set[chanStr] = db
             this.opened_conn_count++
 
@@ -123,8 +126,8 @@ class MessageStorage{
 
         // now db connection is ready
         const db = conn_date_set[chanStr]
-        db.prepare('INSERT INTO message_history VALUES(?, ?)')
-            .run(msgData.msgID, JSON.stringify(msgData))
+        db.prepare('INSERT INTO message_history VALUES(?, ?, ?, ?)')
+            .run(msg_ctx.time, msg_ctx.seq, msg_ctx.rand, JSON.stringify(msgData))
 
         // update stranger_list if necessary
         if (!msgData.known && msgData.type === 'private') {
@@ -143,7 +146,8 @@ class MessageStorage{
     }
 
     query_msg_history(type, channel, msgID) {
-        const dateStr = utils.convert_timestamp_to_date(utils.msgid_utils.convert_msgid_to_seq(msgID).time * 1000)
+        const msg_ctx = utils.msgid_utils.convert_msgid_to_seq(msgID)
+        const dateStr = utils.convert_timestamp_to_date(msg_ctx.time * 1000)
         const chanStr = channel.toString()
         const conn_type_set = this.opened_conns[type]
         if (! (dateStr in conn_type_set)) {
@@ -172,7 +176,23 @@ class MessageStorage{
 
         // db is ready
         const db = conn_date_set[chanStr]
-        const result = db.prepare('SELECT content FROM message_history where id=?').get(msgID)
+        const result = (() => {
+            if (type === 'group') {
+                //the rand field is unreliable
+                const ret = db.prepare('SELECT content FROM message_history WHERE id_time=? AND id_seq=?')
+                    .get(msg_ctx.time, msg_ctx.seq)
+                if (ret === undefined) {
+                    // iOS用户回复iOS用户发的图片消息时，source段里的time蜜汁少1
+                    return db.prepare('SELECT content FROM message_history WHERE id_time=? AND id_seq=?')
+                        .get(msg_ctx.time + 1, msg_ctx.seq)
+                } else {
+                    return ret
+                }
+            } else {
+                return db.prepare('SELECT content FROM message_history WHERE id_time=? AND id_seq=? AND id_rand=?')
+                    .get(msg_ctx.time, msg_ctx.seq, msg_ctx.rand)
+            }
+        })()
         if (result === undefined) {
             return null
         } else {

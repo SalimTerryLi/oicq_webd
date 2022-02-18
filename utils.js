@@ -24,6 +24,7 @@ exports.msgid_utils = {
     convert_msgid_to_seq: (msgid) => {
         let buffer = Buffer.from(msgid, 'base64')
         if (buffer.length !== 12) {
+            console.error('decode msgid error: len=' + buffer.length)
             return null
         }
         return {
