@@ -250,11 +250,13 @@ exports.create_web_daemon = (httpserver, push_server, bot, msgdb, logger) => {
 
         const invitation = eventid_utils.parse_group_invite_id(req.body.eventID)
         bot.pickUser(req.body.who).setGroupInvite(invitation.gid, invitation.seq, req.body.accept).then(r => {
-            if (r) {
-                res.json(build_http_response(0))
-            } else {
-                res.json(build_http_response(-2))
-            }
+            console.log({
+                setGroupInvite: {
+                    accept: req.body.accept,
+                    r: r
+                }
+            })
+            res.json(build_http_response(0))
         }).catch(e => {
             console.log(e)
             res.json(build_http_response(-1))
