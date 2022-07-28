@@ -179,12 +179,13 @@ class MessageStorage{
         const result = (() => {
             if (type === 'group') {
                 //the rand field is unreliable
-                const ret = db.prepare('SELECT content FROM message_history WHERE id_time=? AND id_seq=?')
+                let ret = db.prepare('SELECT content FROM message_history WHERE id_time=? AND id_seq=?')
                     .get(msg_ctx.time, msg_ctx.seq)
                 if (ret === undefined) {
-                    // iOS用户回复iOS用户发的图片消息时，source段里的time蜜汁少1
-                    return db.prepare('SELECT content FROM message_history WHERE id_time=? AND id_seq=?')
-                        .get(msg_ctx.time + 1, msg_ctx.seq)
+                    // handle the case of iOS reply message: time is also not accurate
+                    ret = db.prepare('SELECT content FROM message_history WHERE id_time>=? AND id_time<=? AND id_seq=?')
+                        .get(msg_ctx.time - 10, msg_ctx.time + 10 , msg_ctx.seq)
+                    return ret
                 } else {
                     return ret
                 }
