@@ -28,7 +28,7 @@ class OICQWebAPIDaemon{
         this.logger = this._bot.logger
         this.logger.info('Bring up HTTP API Backend')
         this._http_server = express()
-        this._http_server.use(express.json())
+        this._http_server.use(express.json({limit: '50mb'}))
         this._base_server = http.createServer(this._http_server)
         this._ws_server = new ws.WebSocketServer({noServer: true})
         this._msgdb = new MessageStorage(this.logger, this._config.datadir, this._config.qq)
